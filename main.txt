@@ -1,0 +1,158 @@
+name=$1  #function for user inputs.
+id=$2
+user_input=($1 $2)
+sign_in(){
+if [[ ${#user_input[@]} != 2 ]]  
+then
+        echo "Please provide your Name and Id"
+        exit
+elif ! [[ $name =~ ^[A-Za-z]+$ && $id =~ ^[0-9]+$ ]]
+then
+     echo "Use parameter in proper format."
+     echo "First enter your Name and then ID."
+     exit
+fi
+}
+sign_in
+
+password(){ #function for password verification.
+echo -e "Enter your password:- \c"
+read s_key
+secretKey=shirshak   #declaring password for log in
+count=1
+until [[ "$s_key" = "$secretKey" ]]  
+do
+        if [ "$count" -ge 5 ] 
+        then
+                echo -e "Password not correct. Please input valid password"
+                exit
+        fi
+                echo -e "Enter a correct password:- \c"
+                read s_key
+                count=`expr $count + 1`
+done
+if [ "$s_key" == "$secretKey" ] #password entered by user is correct
+then
+        echo "********************************************************"
+        echo "          Welcome to the program                        "
+        echo "              Your ID:- $id                              "
+        echo "              Your Name:- $name                   "
+        echo "Date and time of execution is $(date)                   "
+        echo "********************************************************"
+fi
+}
+password
+
+
+country_selection() { 
+echo "****************** Best Cricket Team **************************"
+echo "          Code            Country"
+echo "          AUS             Australia"
+echo "          BAN             Bangladesh"
+echo "          NEP             Nepal"
+echo "          IND             India"
+echo "          ENG             Englang"
+echo "***************************************************************"
+echo -e "Enter a country code for best team:- \c"
+read best
+case $best in
+NEP) #if user enterd a correct anser then displays followinf information
+        echo "You have choosed a right answer."
+        echo "ICC announced Nepal National team as an affiliate member in 1988. Asian cricket council (ACC) that was founded in 1983 affiliated Nepal in 1990, which became a full member nation in 1994."
+        player
+        ;;
+Australia | Bangladesh | Nepal | India | Englang) #if user enter country name insted of country code
+        echo "Please enter a country code."
+        country_selection
+;;
+BAN | IND | ENG | AUS)
+                     echo "Invalid Code.This is not a best team."
+                      country_selection
+;;
+$best) #if user entered  incorrect country code
+        echo "Please enter a valid code only"
+        country_selection
+        ;;
+esac
+}
+
+player() {  #function to choose the three best players
+echo -e " *********** Best Player from Cricket Team *****************"
+echo -e "               Code            Player"
+echo -e "               PK              Paras Khadka"
+echo -e "               VK              Virat Kohli"
+echo -e "               DW              David Warner"
+echo -e "               BS              Ben Stroke"
+echo -e "               RT              Ross Taylor"
+echo "************************************************************"
+echo -e "Choose the three best players:- \c"
+read player1 player2 player3
+players=($player1 $player2 $player3)
+if [[ ${#players[@]} != 3 ]] #checks whether the user enter 3 players or not
+then
+        echo "You should enter 3 players"
+        echo " Please, Try again!!"
+        player
+elif [ $player1 = $player2 ] || [ $player1 = $player3 ] || [ $player3 = $player2 ] #checks user repeat the player twice or not
+then
+        echo "You cannot repeat the player code."
+        echo "Please, Try again!!"
+        player
+elif  [ $player1 = "PK" ] || [ $player1 = "VK" ] || [ $player1 = "DW" ] || [ $player1 = "BS" ] || [ $player1 = "RT" ] && [ $player2 = "PK" ] || [ $player2 = "VK" ] || [ $player2 = "DW" ] || [ $player2 = "BS" ] || [ $player2 = "RT" ] && [ $player3 = "PK" ] || [ $player3 = "VK" ] || [ $player3 = "DW" ] || [ $player3 = "BS" ] || [ $player3 = "RT" ]
+then
+        echo -e "\t1\t$player1\n\t2\t$player2\n\t3\t$player3" #prints the player entered by the user
+        player_menu
+else
+        echo "Enter a correct player code."
+        player
+fi
+}
+
+player_menu(){ #function to display menu of player.
+PS3="choose your favourite palyers from these possibilities:"
+select player in $player1 $player2 $player3
+do
+ if [ -z $player ]
+   then
+   echo "you better not have players"
+    program_repeat
+    break
+    else
+    echo "You choose $player as  your favourite player"
+    file
+  fi
+done
+}
+
+file(){  #function for file handling.
+if [ "$player" = "BS" -o "$player" = "RT" ]
+then
+    echo "File not found"
+    echo "Please choose another."
+    country_selection
+else
+ case "$player" in
+      "PK") cat PK
+      ;;
+      "VK") cat VK
+      ;;
+      "DW") cat DW
+     ;;
+      esac
+fi
+}
+
+program_repeat(){   #function to repeat program.
+echo -e "Do you want to repeat:-(Yes/No)? "
+read confirmation
+case $confirmation in
+"Yes" | "Y")  country_selection
+;;
+"No" | "N") exit
+;;
+$confirmation) echo "please enter valid input"
+program_repeat
+;;
+esac
+}
+country_selection
